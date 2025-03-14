@@ -16,9 +16,17 @@ app.use('/api/vector-store', vectorStoreRoutes);
 app.use('/api/file', fileRoutes);
 app.use('/api/search', searchRoutes);
 
-// Health check endpoint
-app.get('/health', async (req, res) => {
+// Root endpoint for basic debugging
+app.get('/', (req, res) => {
+  res.send('Vector Agent API is running. Try /health for API status.');
+});
+
+// Health check endpoints (both /health and /api/health for flexibility)
+const healthCheckHandler = async (req, res) => {
   try {
+    // Basic server status check
+    const serverStatus = 'ok';
+    
     // Check OpenAI API connection
     let openaiStatus = 'unknown';
     try {
@@ -40,8 +48,9 @@ app.get('/health', async (req, res) => {
     }
 
     res.status(200).json({
-      status: 'ok',
+      status: serverStatus,
       version: '1.0.0',
+      time: new Date().toISOString(),
       services: {
         openai: openaiStatus,
         supabase: supabaseStatus
@@ -51,7 +60,11 @@ app.get('/health', async (req, res) => {
     console.error('Health check error:', error);
     res.status(500).json({ status: 'error', error: 'Internal server error' });
   }
-});
+};
+
+// Register health check at both paths
+app.get('/health', healthCheckHandler);
+app.get('/api/health', healthCheckHandler);
 
 // Start server
 app.listen(PORT, () => {
