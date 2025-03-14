@@ -4,6 +4,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
 import fetch from 'node-fetch';
+import { promisify } from 'util';
+
+const readFile = promisify(fs.readFile);
 
 /**
  * Uploads a file to storage and creates a record
@@ -12,10 +15,13 @@ export const uploadFile = async (fileInput: any): Promise<FileUploadResponse> =>
   let fileId: string, fileName: string, contentType: string, fileSize: number;
   let fileContent: Buffer;
 
+  console.log('Processing file input:', typeof fileInput, fileInput);
+
   // Handle the file input (could be a URL or local file)
   if (typeof fileInput === 'string' && fileInput.startsWith('http')) {
     // Handle URL-based file
     try {
+      console.log('Fetching file from URL:', fileInput);
       const response = await fetch(fileInput);
       if (!response.ok) {
         throw new Error(`Failed to fetch file from URL: ${response.statusText}`);
@@ -28,17 +34,26 @@ export const uploadFile = async (fileInput: any): Promise<FileUploadResponse> =>
       // Extract filename from URL or use a generated name
       const urlPath = new URL(fileInput).pathname;
       fileName = path.basename(urlPath) || `file-${Date.now()}`;
+      console.log('File fetched successfully from URL:', { fileName, contentType, fileSize });
     } catch (error) {
       console.error('Error fetching file from URL:', error);
       throw new Error('Failed to fetch file from URL');
     }
-  } else if (fileInput && fileInput.buffer) {
+  } else if (fileInput && fileInput.path) {
     // Handle uploaded file (from multer middleware)
-    fileContent = fileInput.buffer;
-    fileName = fileInput.originalname;
-    contentType = fileInput.mimetype;
-    fileSize = fileInput.size;
+    try {
+      console.log('Processing uploaded file:', fileInput.path);
+      fileContent = await readFile(fileInput.path);
+      fileName = fileInput.originalname;
+      contentType = fileInput.mimetype;
+      fileSize = fileInput.size;
+      console.log('File read successfully:', { fileName, contentType, fileSize });
+    } catch (error) {
+      console.error('Error reading uploaded file:', error);
+      throw new Error('Failed to read uploaded file');
+    }
   } else {
+    console.error('Invalid file input:', fileInput);
     throw new Error('Invalid file input');
   }
 
@@ -56,6 +71,17 @@ export const uploadFile = async (fileInput: any): Promise<FileUploadResponse> =>
   if (storageError) {
     console.error('Error uploading file to storage:', storageError);
     throw new Error('Failed to upload file to storage');
+  }
+  
+  // Clean up local file if it was uploaded (not a URL)
+  if (fileInput && fileInput.path && fs.existsSync(fileInput.path)) {
+    try {
+      fs.unlinkSync(fileInput.path);
+      console.log('Cleaned up temporary file:', fileInput.path);
+    } catch (error) {
+      console.error('Error cleaning up temporary file:', error);
+      // Continue even if cleanup fails
+    }
   }
 
   // Create a record in the files table

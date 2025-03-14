@@ -4,14 +4,23 @@ import { AddFileRequest, CustomRequestHandler } from '../types';
 
 export const uploadFile: CustomRequestHandler = async (req: Request, res: Response) => {
   try {
-    // In a real implementation, we would handle file uploads with a library like multer
-    // For now, we'll simulate file upload and use a URL-based approach
+    // Check for file upload through multer or URL
     const fileUrl = req.body.fileUrl;
-    const localFile = req.file; // This would be populated by multer middleware
+    const localFile = req.file;
 
     if (!fileUrl && !localFile) {
       return res.status(400).json({ error: 'No file provided. Please provide a file URL or upload a file.' });
     }
+
+    console.log('Upload request received:', { 
+      hasFile: !!localFile, 
+      hasUrl: !!fileUrl,
+      fileInfo: localFile ? {
+        filename: localFile.filename,
+        mimetype: localFile.mimetype,
+        size: localFile.size
+      } : null
+    });
 
     const result = await FileService.uploadFile(fileUrl || localFile);
     res.status(201).json(result);

@@ -380,9 +380,12 @@ async function handleFileUpload() {
             const formData = new FormData();
             formData.append('file', file);
             
+            console.log('Uploading file:', file.name, file.type, file.size);
+            
             response = await fetch(`${API_URL}/api/file/upload-file`, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                // Important: Do NOT set Content-Type header, let the browser set it with boundary
             });
         }
         
