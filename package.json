@@ -1,0 +1,50 @@
+{
+  "name": "vector-agent",
+  "version": "1.0.0",
+  "description": "AI-Powered Document Intelligence System",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc --skipLibCheck --noEmitOnError false",
+    "start": "node dist/server.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "init-db": "ts-node scripts/init-db.ts",
+    "lint": "eslint . --ext .ts",
+    "test": "jest",
+    "postinstall": "npm run build"
+  },
+  "keywords": [
+    "vector-search",
+    "document-intelligence",
+    "openai",
+    "supabase",
+    "ai-agent"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "multer": "^1.4.5-lts.1",
+    "node-fetch": "^2.7.0",
+    "openai": "^4.87.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/multer": "^1.4.7",
+    "@types/node": "^22.13.10",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.1",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.6",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.2"
+  },
+  "type": "commonjs",
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
