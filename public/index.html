@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vector Agent Chat</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Vector Agent</h1>
+            <div class="controls">
+                <button id="upload-btn" class="action-button">Upload Document</button>
+                <select id="vector-store-select">
+                    <option value="">Select Vector Store</option>
+                </select>
+                <button id="create-store-btn" class="action-button">Create New Store</button>
+            </div>
+        </header>
+
+        <div class="main-container">
+            <div class="chat-container">
+                <div id="chat-messages" class="chat-messages">
+                    <div class="message system">
+                        <div class="message-content">
+                            <p>Welcome to Vector Agent! Start by creating or selecting a vector store, then upload some documents to chat with them.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input-container">
+                    <textarea id="chat-input" placeholder="Ask a question about your documents..."></textarea>
+                    <button id="send-btn" disabled>Send</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for file upload -->
+        <div id="upload-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h2>Upload Document</h2>
+                <p>Enter a URL to a document or upload a file</p>
+                <div class="url-input">
+                    <input type="text" id="file-url" placeholder="https://example.com/document.pdf">
+                </div>
+                <div class="file-upload">
+                    <input type="file" id="file-input" hidden>
+                    <button id="file-select-btn">Select File</button>
+                    <span id="file-name">No file selected</span>
+                </div>
+                <button id="upload-confirm-btn" class="action-button">Upload</button>
+            </div>
+        </div>
+
+        <!-- Modal for create store -->
+        <div id="create-store-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h2>Create Vector Store</h2>
+                <div class="store-input">
+                    <label for="store-name">Store Name</label>
+                    <input type="text" id="store-name" placeholder="my-documents">
+                </div>
+                <div class="expiration-input">
+                    <label for="expiration-days">Expires After (days)</label>
+                    <input type="number" id="expiration-days" min="1" value="30">
+                </div>
+                <button id="create-store-confirm-btn" class="action-button">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

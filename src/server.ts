@@ -1,24 +1,29 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
+import path from 'path';
 import { PORT, openai, supabase } from './config';
 import vectorStoreRoutes from './routes/vectorStoreRoutes';
 import fileRoutes from './routes/fileRoutes';
 import searchRoutes from './routes/searchRoutes';
 
 const app = express();
+const publicPath = path.join(__dirname, '..', 'public');
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from the public directory
+app.use(express.static(publicPath));
 
 // Routes
 app.use('/api/vector-store', vectorStoreRoutes);
 app.use('/api/file', fileRoutes);
 app.use('/api/search', searchRoutes);
 
-// Root endpoint for basic debugging
+// Root endpoint (serves the chatbot UI)
 app.get('/', (req: Request, res: Response) => {
-  res.send('Vector Agent API is running. Try /health for API status.');
+  res.sendFile(path.join(publicPath, 'index.html'));
 });
 
 // Health check endpoints (both /health and /api/health for flexibility)
