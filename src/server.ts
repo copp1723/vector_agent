@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { PORT, openai, supabase } from './config';
 import vectorStoreRoutes from './routes/vectorStoreRoutes';
@@ -17,12 +17,12 @@ app.use('/api/file', fileRoutes);
 app.use('/api/search', searchRoutes);
 
 // Root endpoint for basic debugging
-app.get('/', (req, res) => {
+app.get('/', (req: Request, res: Response) => {
   res.send('Vector Agent API is running. Try /health for API status.');
 });
 
 // Health check endpoints (both /health and /api/health for flexibility)
-const healthCheckHandler = async (req, res) => {
+const healthCheckHandler = async (req: Request, res: Response) => {
   try {
     // Basic server status check
     const serverStatus = 'ok';
